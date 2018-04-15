@@ -7,6 +7,7 @@ import { HomeComponent } from './home.component';
 
 import { AgmCoreModule } from '@agm/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { HttpModule } from '@angular/http';
 
 // Material Design Modules
 import { MatInputModule } from '@angular/material/input';
@@ -20,6 +21,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     CommonModule,
     HomeRoutingModule,
     FlexLayoutModule,
+    HttpModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyDHAKNnSZpAC8PN9zQmWjyJ09F_dErYfmI',
     }),
