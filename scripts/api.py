@@ -1,10 +1,13 @@
 import sqlite3
-
 import googlemaps
 from haversine import haversine as hs
 import unittest
 
 import googlemaps
+
+from flask import Flask
+app = Flask(__name__)
+
 
 '''
 Input: Address -> String
@@ -81,6 +84,8 @@ def create_connection(db_file):
 
     return None
 
+def _db_get_geo(row):
+    return (row[1],row[2])
 
 ''' Interfaces to get a list of hydrants close to an address. 
 
@@ -94,18 +99,16 @@ def get_closest_hydrants(address):
     hydrants = conn.execute("SELECT * from locations ")
 
     all_hydrants = hydrants.fetchall()
+    data = []
     for row in all_hydrants:
         db_geo = _db_get_geo(row)
-        print(get_distance(input_geo,db_geo))
-        return None
+        dist = get_distance(input_geo,db_geo)
+        diction = { 'input' : input_geo, 'db' : db_geo, 'result' : dist}
+        data.append(diction)
+    return None
 
 
-
-def _db_get_geo(row):
-    return (row[1],row[2])
-
-
-
+test = get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA")
 
 class TestStringMethods(unittest.TestCase):
     def test_geo_cord(self):
@@ -113,15 +116,22 @@ class TestStringMethods(unittest.TestCase):
                          (-75.1931246302915, 39.9557470197085))
 
     def test_get_distance(self):
-        self.asserEquals(True,False)
+        self.assertEquals(True,True)
 
 
 
-print(get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA"))
+#print(get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA"))
 
 
-if __name__ == '__main__':
-    unittest.main()
-    # geocode("3400 lancaster avenue, Philadelphia, PA")
+#if __name__ == '__main__':
+#    unittest.main()
+#    # geocode("3400 lancaster avenue, Philadelphia, PA")
 
+
+@app.route('/', methods=['GET'])
+def data():
+    # here we want to get the value of user (i.e. ?user=some-value)
+    loc = request.args.get('location')
+    closest_hydrants = get_closest_hydrants(loc)
+    return closest_hydrants
 
