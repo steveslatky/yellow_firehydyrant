@@ -33,8 +33,8 @@ def main():
         _note = row["CriticalNotes"]
         params = (int(e), float(_lat), float(_lng), bool(_oos), _note)
         conn.execute("INSERT INTO locations VALUES(?,?,?,?,?)", params)
-        conn.commit()
 
+    conn.commit()
 
 if __name__ == '__main__':
     main()
