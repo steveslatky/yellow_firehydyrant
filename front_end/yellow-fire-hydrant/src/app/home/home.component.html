@@ -1,0 +1,45 @@
+<div class="home-component"
+     fxLayout>
+  <agm-map
+    fxFlex
+    (mapReady)="onMapReady($event)"
+    [latitude]="lat"
+    [longitude]="lng">
+    <agm-marker
+      *ngFor="let marker of markers"
+      [latitude]="marker.lat"
+      [longitude]="marker.lng"
+      [label]='marker.label'
+      >
+    </agm-marker>
+  </agm-map>
+
+  <div class="inputs-container"
+       fxFlex="300px"
+       fxLayout="column"
+       fxLayoutGap="16px">
+    <div class="location-input-container mat-elevation-z2">
+      <mat-form-field>
+        <input matInput placeholder="Location">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="column"
+         fxLayoutGap="16px">
+      <mat-card class="location-card"
+                fxLayout="column"
+                fxLayoutGap="8px"
+                *ngFor="let marker of markers">
+        <div fxLayout fxLayoutAlign="start center">
+          <div fxFlex class="label">{{marker.label}}</div>
+          <mat-icon>location_on</mat-icon>
+          <div class="distance">3.5 mi</div>
+        </div>
+        <mat-card-content>
+          {{marker | json}}
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
