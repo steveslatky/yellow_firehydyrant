@@ -106,9 +106,12 @@ def get_closest_hydrants(address):
 
     all_hydrants = hydrants.fetchall()
     dists = []
+    distsToAdd = list()
     for e,row in enumerate(all_hydrants):
         db_geo = _db_get_geo(row)
-        dists.append((e,get_distance(input_geo,db_geo)))
+        dist = get_distance(input_geo, db_geo)
+        distsToAdd.append(dist)
+        dists.append((e,dist))
     dists = sorted(dists, key=lambda x: x[1])
     _dists = dists[:15]
     keys = list(map(lambda x: x[0], _dists))
@@ -119,7 +122,13 @@ def get_closest_hydrants(address):
     f = open("../data/hydrants.json", "r")
     data_json = json.load(f)
 
-    return [data_json[i] for i in keys]
+    print('dists', distsToAdd)
+    retval = [data_json[i] for i in keys]
+
+    for i, x in enumerate(retval):
+        x['distance'] = distsToAdd[i]
+
+    return retval
 
 def _db_get_geo(row):
     return (row[1],row[2])
