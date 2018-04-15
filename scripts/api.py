@@ -1,3 +1,5 @@
+import sqlite3
+
 import googlemaps
 from haversine import haversine as hs
 import unittest
@@ -61,7 +63,46 @@ Return Float(miles/km)
 
 '''
 def get_distance(query, input, miles=True):
-    hs(query,input,miles)
+   return hs(query,input,miles)
+
+
+
+def create_connection(db_file):
+    """ create a database connection to the SQLite database
+        specified by db_file
+    :param db_file: database file
+    :return: Connection object or None
+    """
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except sqlite3.Error as e:
+        print(e)
+
+    return None
+
+
+''' Interfaces to get a list of hydrants close to an address. 
+
+Input Address
+Return: 15 closest hydrants [(Float, Float, Bool, String)] 
+'''
+def get_closest_hydrants(address):
+    input_geo = get_geo_cords(address)
+
+    conn = create_connection("../database/hydrants.db")
+    hydrants = conn.execute("SELECT * from locations ")
+
+    all_hydrants = hydrants.fetchall()
+    for row in all_hydrants:
+        db_geo = _db_get_geo(row)
+        print(get_distance(input_geo,db_geo))
+        return None
+
+
+
+def _db_get_geo(row):
+    return (row[1],row[2])
 
 
 
@@ -74,11 +115,9 @@ class TestStringMethods(unittest.TestCase):
     def test_get_distance(self):
         self.asserEquals(True,False)
 
-result = _geocode("3400 lancaster avenue, Philadelphia, PA")
 
-print(result)
 
-print(get_geo_cords("3400 lancaster avenue, Philadelphia, PA"))
+print(get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA"))
 
 
 if __name__ == '__main__':
