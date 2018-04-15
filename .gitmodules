@@ -1,0 +1,3 @@
+[submodule "front_end/yellow-fire-hydrant"]
+	path = front_end/yellow-fire-hydrant
+	url = https://github.com/ehegnes/yellow-fire-hydrant
