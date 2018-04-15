@@ -7,7 +7,11 @@ import unittest
 import googlemaps
 
 from flask import Flask
+from flask import request
+from flask.json import jsonify
+from flask_cors import CORS, cross_origin
 app = Flask(__name__)
+cors = CORS(app)
 
 
 '''
@@ -108,23 +112,21 @@ def get_closest_hydrants(address):
     dists = sorted(dists, key=lambda x: x[1])
     _dists = dists[:15]
     keys = list(map(lambda x: x[0], _dists))
+    print('keys', keys)
 
     print(_dists)
 
     f = open("../data/hydrants.json", "r")
     data_json = json.load(f)
 
-    j
-    for i in keys:
-        data_json[i])
+    return [data_json[i] for i in keys]
 
 def _db_get_geo(row):
     return (row[1],row[2])
 
 @app.route('/', methods=['GET'])
+@cross_origin()
 def data():
-    # here we want to get the value of user (i.e. ?user=some-value)
     loc = request.args.get('location')
     closest_hydrants = get_closest_hydrants(loc)
-    return closest_hydrants
-
+    return jsonify({'data': closest_hydrants})
