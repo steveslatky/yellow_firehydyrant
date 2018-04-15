@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 import googlemaps
@@ -25,7 +26,7 @@ def get_geo_cords(address):
     json = _geocode(address)
     lng = json[0]["geometry"]["viewport"]["southwest"]["lng"]
     lat = json[0]["geometry"]["viewport"]["southwest"]["lat"]
-    return lng, lat
+    return lat, lng
 
 '''
 Input: Address -> String
@@ -67,6 +68,7 @@ def get_distance(query, input, miles=True):
 
 
 
+
 def create_connection(db_file):
     """ create a database connection to the SQLite database
         specified by db_file
@@ -94,10 +96,23 @@ def get_closest_hydrants(address):
     hydrants = conn.execute("SELECT * from locations ")
 
     all_hydrants = hydrants.fetchall()
-    for row in all_hydrants:
+    dists = []
+    for e,row in enumerate(all_hydrants):
         db_geo = _db_get_geo(row)
-        print(get_distance(input_geo,db_geo))
-        return None
+        dists.append((e,get_distance(input_geo,db_geo)))
+    dists = sorted(dists, key=lambda x: x[1])
+    _dists = dists[:15]
+    keys = list(map(lambda x: x[0], _dists))
+
+    print(_dists)
+
+    f = open("../data/hydrants.json", "r")
+    data_json = json.load(f)
+
+    j
+    for i in keys:
+        data_json[i])
+
 
 
 
@@ -107,21 +122,22 @@ def _db_get_geo(row):
 
 
 
-class TestStringMethods(unittest.TestCase):
-    def test_geo_cord(self):
-        self.assertEqual(get_geo_cords("3400 lancaster avenue, Philadelphia, PA"),
-                         (-75.1931246302915, 39.9557470197085))
+# class TestStringMethods(unittest.TestCase):
+#     def test_geo_cord(self):
+#         self.assertEqual(get_geo_cords("3400 lancaster avenue, Philadelphia, PA"),
+#                          (-75.1931246302915, 39.9557470197085))
+#
+#     def test_get_distance(self):
+#         self.asserEquals(True,False)
 
-    def test_get_distance(self):
-        self.asserEquals(True,False)
 
 
 
-print(get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA"))
 
 
 if __name__ == '__main__':
-    unittest.main()
+    print(get_closest_hydrants("3400 lancaster avenue, Philadelphia, PA"))
+    # unittest.main()
     # geocode("3400 lancaster avenue, Philadelphia, PA")
 
 
